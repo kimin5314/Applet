@@ -1,4 +1,4 @@
-****# 乡村闲置资源
+# 乡村闲置资源
 
 ## 目录
 
@@ -213,13 +213,15 @@ create table user
 (
     id         int auto_increment
         primary key,
+    openid     varchar(255) unique null,
+    unionid    varchar(255) null,
     phone      char(11) null,
     name       varchar(255) null,
     avatar     varchar(255) null,
     role       varchar(255) null,
     created_at datetime default CURRENT_TIMESTAMP null,
     updated_at datetime default CURRENT_TIMESTAMP null on update CURRENT_TIMESTAMP,
-        constraint user_pk 
+    constraint user_pk 
         unique (phone)
 );
 ```
@@ -424,7 +426,51 @@ create table message
 
 ### 用户相关
 
-1. 注册/登录[示例](#注册登录)
+1. 微信小程序登录
+    - URL: /user/wxlogin
+    - Method: POST
+    - Request:
+        - code: 小程序登录code
+    - Response:
+        - data:
+            - openid: 微信openid
+            - unionid: 微信unionid (如果用户已授权)
+            - user: 用户信息 (如果已注册)
+            - isNewUser: 是否新用户
+
+2. 微信小程序注册
+    - URL: /user/register
+    - Method: POST
+    - Request:
+        - code: 小程序登录code
+        - user: 用户信息对象
+    - Response:
+        - data: 用户信息
+            - id: 用户ID
+            - openid: 微信openid
+            - unionid: 微信unionid (如果有)
+            - name: 用户名
+            - avatar: 头像(url)
+            - role: 角色
+
+3. 更新用户信息
+    - URL: /user/update/{id}
+    - Method: PUT
+    - Request:
+        - id: 用户ID
+        - user: 用户信息对象 (包含要更新的字段)
+    - Response:
+        - data: 更新后的用户信息
+
+4. 获取用户信息
+    - URL: /user/info/{openid}
+    - Method: GET
+    - Request:
+        - openid: 微信openid
+    - Response:
+        - data: 用户信息
+
+5. 注册/登录[示例](#注册登录)
     - URL: /user/login
     - Method: POST
     - Request:
@@ -438,7 +484,7 @@ create table message
             - avatar: 头像(url)
             - role: 角色
 
-2. 更新用户信息[示例](#修改用户信息)
+6. 更新用户信息[示例](#修改用户信息)
     - URL: /user/update/{id}
     - Method: PUT
     - Request:
@@ -986,6 +1032,35 @@ fetch("http://kimin.cn:8080/media/upload/1", {
 ```javascript
 fetch("http://kimin.cn:8080/media/delete/1/1.png", {
     method: "POST",
+})
+```
+
+### 微信小程序登录
+
+```javascript
+const data = {
+    code: 'wx_code_from_login'
+}
+fetch("http://kimin.cn:8080/user/wxlogin", {
+    method: "POST",
+    body: JSON.stringify(data)
+})
+```
+
+### 微信小程序注册
+
+```javascript
+const data = {
+    code: 'wx_code_from_login',
+    user: {
+        name: "张三",
+        avatar: "avatar_url",
+        // 其他用户信息
+    }
+}
+fetch("http://kimin.cn:8080/user/register", {
+    method: "POST",
+    body: JSON.stringify(data)
 })
 ```
 

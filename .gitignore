@@ -33,3 +33,5 @@ build/
 .vscode/
 
 test.html
+
+keystore.p12

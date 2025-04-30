@@ -21,11 +21,19 @@ public class User {
     @Column(name = "role")
     private String role;
 
-    public User(String phone, String role) {
+    @Column(name = "openid")
+    private String openid;
+
+    @Column(name = "unionid")
+    private String unionid;
+
+    public User(String phone, String role, String openid, String unionid) {
         this.phone = phone;
         this.name = "user" + phone;
         this.avatar = "default";
         this.role = role;
+        this.openid = openid;
+        this.unionid = unionid;
     }
 
     public User() {
@@ -70,5 +78,21 @@ public class User {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public String getOpenid() {
+        return openid;
+    }
+
+    public void setOpenid(String openid) {
+        this.openid = openid;
+    }
+
+    public String getUnionid() {
+        return unionid;
+    }
+
+    public void setUnionid(String unionid) {
+        this.unionid = unionid;
     }
 }
