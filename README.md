@@ -50,21 +50,22 @@
     8. [维护迭代](#8-维护迭代)
 
 2. [API示例](#API示例)
-    1. [注册登录](#注册登录)
-    2. [修改用户信息](#修改用户信息)
-    3. [发布资源](#发布资源)
-    4. [修改资源信息](#修改资源信息)
-    5. [删除资源](#删除资源)
-    6. [获取资源列表](#获取资源列表)
-    7. [推荐资源](#推荐资源)
-    8. [收藏资源](#收藏资源)
-    9. [取消收藏资源](#取消收藏资源)
-    10. [收藏列表](#收藏列表)
-    11. [资源详情](#资源详情)
-    12. [浏览历史](#浏览历史)
-    13. [上传文件](#上传文件)
-    14. [访问文件](#访问文件)
-    15. [删除文件](#删除文件)
+    1. [微信小程序登录](#微信小程序登录)
+    2. [微信小程序注册](#微信小程序注册)
+    3. [修改用户信息](#修改用户信息)
+    4. [发布资源](#发布资源)
+    5. [修改资源信息](#修改资源信息)
+    6. [删除资源](#删除资源)
+    7. [获取资源列表](#获取资源列表)
+    8. [推荐资源](#推荐资源)
+    9. [收藏资源](#收藏资源)
+    10. [取消收藏资源](#取消收藏资源)
+    11. [收藏列表](#收藏列表)
+    12. [资源详情](#资源详情)
+    13. [浏览历史](#浏览历史)
+    14. [上传文件](#上传文件)
+    15. [访问文件](#访问文件)
+    16. [删除文件](#删除文件)
 
 ## 开发流程
 
@@ -833,15 +834,48 @@ create table message
 
 ## API示例
 
-### 注册登录
+### 微信小程序登录
 
 ```javascript
+// 微信小程序登录
 const data = {
-    phone: 11122223333,
+    code: 'wx_code_from_login'  // 通过wx.login()获取的临时登录凭证
 }
-fetch("http://kimin.cn:8080/user/login", {
+fetch("http://kimin.cn:8080/user/wxlogin", {
     method: "POST",
-    body: JSON.stringify({data})
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(data)
+})
+.then(response => response.json())
+.then(result => {
+    // result包含：
+    // - openid：用户的微信openid
+    // - unionid：用户的微信unionid（如果用户已授权）
+    // - user：用户信息（如果已注册）
+    // - isNewUser：是否新用户
+})
+```
+
+### 微信小程序注册
+
+```javascript
+// 微信小程序注册/更新用户信息
+const data = {
+    code: 'wx_code_from_login',  // 通过wx.login()获取的临时登录凭证
+    user: {
+        name: "张三",
+        avatar: "avatar_url",
+        role: "user"  // 可选，默认为"user"
+    }
+}
+fetch("http://kimin.cn:8080/user/register", {
+    method: "POST",
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(data)
 })
 ```
 
@@ -1032,35 +1066,6 @@ fetch("http://kimin.cn:8080/media/upload/1", {
 ```javascript
 fetch("http://kimin.cn:8080/media/delete/1/1.png", {
     method: "POST",
-})
-```
-
-### 微信小程序登录
-
-```javascript
-const data = {
-    code: 'wx_code_from_login'
-}
-fetch("http://kimin.cn:8080/user/wxlogin", {
-    method: "POST",
-    body: JSON.stringify(data)
-})
-```
-
-### 微信小程序注册
-
-```javascript
-const data = {
-    code: 'wx_code_from_login',
-    user: {
-        name: "张三",
-        avatar: "avatar_url",
-        // 其他用户信息
-    }
-}
-fetch("http://kimin.cn:8080/user/register", {
-    method: "POST",
-    body: JSON.stringify(data)
 })
 ```
 
